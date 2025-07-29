@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ryan's bday website 2025</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #111;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #puzzle {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 1px;
+            margin-bottom: 20px;
+        }
+
+        #piece2u {
+            width: 300px;
+            height: 300px;
+            background-image: url('./assets/ryan.jpg');
+            background-size: 300px 300px;
+            cursor: pointer;
+            border: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+        .piece {
+            width: 60px;
+            height: 60px;
+            background-image: url('./assets/ryan.jpg');
+            background-size: 300px 300px;
+            cursor: pointer;
+            border: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+        #main-content {
+            display: none;
+            text-align: center;
+        }
+
+        .highlight {
+            outline: 2px solid yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="piece2u"></div>
+    <h1>🧩 Solve the 5×5 Jigsaw Puzzle</h1>
+    <div id="puzzle"></div>
+
+    <div id="main-content-1">
+        <div id="main-content">
+            <h2>🎉 CONGRATS! You Solved It!</h2>
+            <!-- // edit here to change the text -->
+            <a href="https://www.youtube.com/watch?v=B1_3YRI3YXs" target="_blank">Click here to see the birthday
+                card</a>
+            <a href="https://www.canva.com/design/DAGtZwH9Z5s/3dKem-4Z-WXEbOhwOeAJWA/view?utm_content=DAGtZwH9Z5s&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h3740c463bf"
+                target="_blank">2nd Birthday Card</a>
+            <p>Let us know too and you can claim your present! HAHA</p>
+        </div>
+    </div>
+
+    <script>
+        const puzzle = document.getElementById('puzzle');
+        const main = document.getElementById('main-content');
+
+        const gridSize = 5;          // 5x5 puzzle
+        const tileSize = 60;         // Each piece is 60px x 60px
+        const total = gridSize * gridSize;
+        const correctOrder = [...Array(total).keys()];
+        let currentOrder = shuffle([...correctOrder]);
+
+        function createPieces(order) {
+            puzzle.innerHTML = '';
+            order.forEach(i => {
+                const row = Math.floor(i / gridSize);
+                const col = i % gridSize;
+
+                const piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.style.backgroundPosition = `-${col * tileSize}px -${row * tileSize}px`;
+                piece.dataset.index = i;
+                puzzle.appendChild(piece);
+            });
+        }
+
+        let selected = null;
+
+        puzzle.addEventListener('click', e => {
+            if (!e.target.classList.contains('piece')) return;
+
+            if (selected) {
+                const i1 = Array.from(puzzle.children).indexOf(selected);
+                const i2 = Array.from(puzzle.children).indexOf(e.target);
+
+                [currentOrder[i1], currentOrder[i2]] = [currentOrder[i2], currentOrder[i1]];
+
+                selected.classList.remove('highlight');
+                selected = null;
+
+                createPieces(currentOrder);
+
+                if (isSolved()) {
+                    puzzle.style.display = 'none';
+                    main.style.display = 'block';
+                }
+            } else {
+                selected = e.target;
+                selected.classList.add('highlight');
+            }
+        });
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function isSolved() {
+            return currentOrder.every((val, idx) => val === idx);
+        }
+
+        createPieces(currentOrder);
+    </script>
+</body>
+
+</html>
